@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "60151307015",
+    "project_id": "studysmart-9acc0",
+    "storage_bucket": "studysmart-9acc0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60151307015:android:3b097ec8af165740cfc3a2",
+        "android_client_info": {
+          "package_name": "com.proj1.StudySmart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60151307015-1sgvfa7j5u74clb9a1ked3d1in0gigcs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.proj1.StudySmart",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "60151307015-pkknk9muq02bucp7h9cd09ku3fpkgd55.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeQ5rpj6O6uQn4H9Drlb3gTQeamnIm-ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60151307015-pkknk9muq02bucp7h9cd09ku3fpkgd55.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
