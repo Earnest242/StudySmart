@@ -2,9 +2,7 @@ import 'react-native-gesture-handler';
 import * as React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import homeScreen from '../screens/home';
-import coursesScreen from '../screens/courses';
-import signUp from '../screens/signUp';
-import {SignUp2} from '../screens/signUp';
+import SignUp2 from '../screens/signUp';
 import chatScreen from '../screens/chatScreen';
 import {creategroup} from '../screens/creategroup';
 import groupScreen from '../screens/groupScreen';
@@ -12,6 +10,8 @@ import groupInfo from '../screens/groupInfo';
 import units from '../screens/units';
 import notespage from '../screens/notes';
 import {joinGroup} from '../screens/creategroup';
+import phoneAuth from '../screens/phoneAuth';
+import otpVerification from '../screens/otp';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,20 +21,6 @@ const AppScreen = () => {
       <Stack.Screen
         name="StudySmart"
         component={homeScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="courses"
-        component={coursesScreen}
-        options={{
-          title: 'courses',
-          headerTintColor: 'white',
-          headerStyle: {backgroundColor: 'dodgerblue'},
-        }}
-      />
-      <Stack.Screen
-        name="signUp"
-        component={signUp}
         options={{headerShown: false}}
       />
       <Stack.Screen
@@ -86,6 +72,17 @@ const AppScreen = () => {
         component={notespage}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="phoneauthentication"
+        component={phoneAuth}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="otpVerification"
+        component={otpVerification}
+        options={{headerShown: false}}
+      />
+      
     </Stack.Navigator>
   );
 };

@@ -2,12 +2,12 @@ import React, {useState, useCallback, useEffect, useLayoutEffect} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import globalstyles from '../globalstyles';
 import {GiftedChat} from 'react-native-gifted-chat';
-import {user2} from './signUp';
+import { user1 } from '../database/data';
 import firestore from '@react-native-firebase/firestore';
-import {Groupid} from './home';
+import { Groupid } from './home';
 import {groupdata} from './home';
 
-function chatScreen({navigation, props}) {
+function chatScreen({route,navigation, props}) {
   let [messages, setMessages] = useState([]);
   useEffect(() => {
     setMessages([
@@ -85,7 +85,7 @@ function chatScreen({navigation, props}) {
               //fontStyle: 'italic',
               paddingLeft: '17%',
             }}>
-            {groupdata.Group_Name}
+            {route.params.groupName}
           </Text>
         </TouchableOpacity>
         <Text
@@ -105,7 +105,7 @@ function chatScreen({navigation, props}) {
         renderUsernameOnMessage={true}
         onSend={messages => onSend(messages)}
         user={{
-          _id: user2.uid,
+          _id: user1.uid,
           name: 'earnest',
           //avatar: auth?.currentUser?.photoURL,
         }}

@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, ScrollView, FlatList} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import globalstyles from '../globalstyles';
-import {Groupid} from './creategroup';
-import {groupdata} from './home';
-import {groupUserInfo} from './home';
-import {GroupUnits} from './home';
+//import {Groupid} from './creategroup';
+//import {groupdata} from './home';
+//import {groupUserInfo} from './home';
+//import {GroupUnits} from './home';
 
 function groupScreen({navigation}) {
   return (

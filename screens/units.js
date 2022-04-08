@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import globalstyles from '../globalstyles';
 import firestore from '@react-native-firebase/firestore';
-import {Groupid} from './home';
+//import {Groupid} from './home';
 
 var test = true;
 

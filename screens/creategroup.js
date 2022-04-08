@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import globalstyles from '../globalstyles';
-import {user2} from './signUp';
+//import {user2} from './signUp';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {firebase} from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import {userdata} from './home';
-//import {Groupid} from '../database/data';
 
 //export var Groupid = null;
 
@@ -23,6 +24,8 @@ export const creategroup = ({navigation}) => {
   let [yearOfStudy, setyear] = useState(null);
   let [sem, setsemister] = useState(null);
   let [groupId2, setgroupid2] = useState();
+
+  var user2 = firebase.auth().currentUser;
 
   //CREATE GROUP
   const creategroup2 = () => {
@@ -34,6 +37,7 @@ export const creategroup = ({navigation}) => {
           .collection('classGroups')
           .doc(group_Id)
           .set({
+            groupId: group_Id,
             Group_Name: GroupName,
             moderatorId: user2.uid,
             name: userdata.name,
@@ -54,11 +58,11 @@ export const creategroup = ({navigation}) => {
           firestore()
             .collection('Users')
             .doc(user2.uid)
-            .set({groupId: group_Id}, {merge: true});
+            .set({groupId: group_Id, groupName:GroupName}, {merge: true});
           ToastAndroid.show('Group created', ToastAndroid.SHORT);
           //Groupid = group_Id;
           //console.log(Groupid);
-          //navigation.navigate('StudySmart');
+          navigation.navigate('StudySmart');
         }
       } catch (error) {
         alert(error);

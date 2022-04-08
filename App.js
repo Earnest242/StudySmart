@@ -13,11 +13,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import AppScreen from './navigation/personal1';
 import Customdrawer from './navigation/customdrawer';
-import {SignUp2} from './screens/signUp';
+import SignUp2 from './screens/signUp';
 import Icon from 'react-native-vector-icons/AntDesign';
 import settings from './screens/settings';
-import {gettinguserdata} from './database/data';
-import {gettingdata} from './database/data';
 const Drawer = createDrawerNavigator();
 
 export default class App extends Component {

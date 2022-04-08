@@ -7,117 +7,41 @@
  */
 
 import React, {useState, useEffect} from 'react';
-import {Text, View, TouchableOpacity, StatusBar, Modal} from 'react-native';
+import {Text, View, TouchableOpacity, StatusBar, Modal, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {user2} from './signUp';
+import { user1 } from '../database/data';
+import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-export var groupdata = {};
-export var groupUserInfo;
-export var GroupUnits;
+//export var groupdata = {};
+//export var groupUserInfo;
+//export var GroupUnits;
 export var userdata;
 export var Groupid;
 
 const homeScreen = ({navigation}) => {
-  getuserdata();
+  var user2 = firebase.auth().currentUser;
+  //getuserdata();
 
   let [user_data, setUser_data] = useState({});
   let [floatmodal, setfloatmodal] = useState(false);
-  //group
-  let [GInfo, setGInfo] = useState();
-  let [Gname, setGname] = useState(null);
-  let [GYear, setGyear] = useState();
-  let [Gsem, setGsem] = useState();
-  let [modId, setmodId] = useState();
-  let [modName, setmodname] = useState();
-  let [modPhone, setmodPhone] = useState();
-  //users data
-  let [usersInfo, setUsersInfo] = useState([]);
-  //group notes
-  let [gNotes, setGnotes] = useState([]);
-  //userdata function
 
   useEffect(() => {
-    getGroupData();
-  }, [Groupid]);
-  getGroupData();
-  async function getuserdata() {
-    var fetchUserdata = await firestore()
+    const subscriber = firestore()
       .collection('Users')
-      .doc(user2.uid)
-      .get();
-    var data4 = fetchUserdata.data();
-    setUser_data(data4);
-  }
+      .doc(user1.uid)
+      .onSnapshot(documentSnapshot => {
+        console.log('User data55: ', documentSnapshot.data());
+        setUser_data(documentSnapshot.data());
+      });
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
   userdata = user_data;
+  console.log(userdata);
   Groupid = userdata.groupId;
-
-  //getting group data
-  async function getGroupData() {
-    if (Groupid != null) {
-      var groupdatafetch = await firestore()
-        .collection('classGroups')
-        .doc(Groupid)
-        .get();
-      var data3 = groupdatafetch.data();
-      setGname(data3.Group_Name);
-      setGyear(data3.StudyYear);
-      setGsem(data3.semister);
-      setmodname(data3.moderatorName);
-      setmodPhone(data3.ModeratorPhoneNo);
-      setmodId(data3.moderatorId);
-
-      groupdata = {
-        Group_Name: Gname,
-        StudyYear: GYear,
-        semister: Gsem,
-        moderatorId: modId,
-        moderatorName: modName,
-        ModeratorPhoneNo: modPhone,
-      };
-    }
-  }
-
-  //users info
-
-  if (Groupid != null) {
-    firestore()
-      .collection('Users')
-      .where('groupId', '==', Groupid)
-      .onSnapshot(snapshot =>
-        setUsersInfo(
-          snapshot.docs.map(doc => ({
-            UserId: doc.data().userId,
-            UserName: doc.data().name,
-            PhoneNo: doc.data().phoneNumber,
-          })),
-        ),
-      );
-  }
-
-  groupUserInfo = usersInfo;
-
-  //getting groupnotes
-
-  if (Groupid != null) {
-    firestore()
-      .collection('classGroups')
-      .doc(Groupid)
-      .collection('units')
-      .onSnapshot(snapshot =>
-        setGnotes(
-          snapshot.docs.map(doc => ({
-            UnitId: doc.data().UnitId,
-            UnitCode: doc.data().UnitCode,
-            UnitName: doc.data().UnitName,
-            notes: doc.data().notes,
-          })),
-        ),
-      );
-  }
-
-  GroupUnits = gNotes;
+  console.log(Groupid);
 
   const joingroupnav = props => {
     navigation.navigate(props);
@@ -125,6 +49,7 @@ const homeScreen = ({navigation}) => {
   };
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <StatusBar backgroundColor="#0F1D41" />
       <View
         style={{
           flexDirection: 'row',
@@ -132,8 +57,10 @@ const homeScreen = ({navigation}) => {
           height: 57,
           //borderBottomLeftRadius: 12,
           //borderBottomRightRadius: 12,
+          //justifyContent:'center',
+          alignContent:'center'
         }}>
-        <StatusBar backgroundColor="#0F1D41" />
+          
         <TouchableOpacity
           style={{marginLeft: 18, marginTop: 5}}
           onPress={() => navigation.openDrawer()}>
@@ -145,22 +72,14 @@ const homeScreen = ({navigation}) => {
             fontSize: 28,
             fontFamily: 'georgia',
             fontStyle: 'italic',
-            marginLeft: 70,
+            marginLeft: 25,
           }}>
-          Study
-        </Text>
-        <Text
-          style={{
-            color: 'white',
-            fontSize: 28,
-            fontFamily: 'georgia',
-            fontStyle: 'italic',
-          }}>
-          Smart
+          icllass
         </Text>
       </View>
       {Groupid != null ? (
-        <TouchableOpacity
+        <View>
+        <View
           style={{
             marginTop: 10,
             height: 100,
@@ -170,31 +89,29 @@ const homeScreen = ({navigation}) => {
             //borderRadius: 5,
             flexDirection: 'row',
           }}
-          onPress={() => navigation.navigate('chatscreen')}>
-          <View
-            style={{
-              backgroundColor: '#D3DAEE',
-              height: 30,
-              width: 30,
-              borderRadius: 15,
-            }}></View>
+          >
           <Text
             style={{
-              color: 'dodgerblue',
+              color: '#0F1D41',
               fontSize: 20,
+              fontWeight:'bold',
               fontFamily: 'georgia',
-              marginLeft: 10,
-              marginTop: 4,
+              marginLeft: 75,
+              marginTop: 15,
             }}>
-            {groupdata.Group_Name}
+            {user_data.groupName}
           </Text>
-          <Icon
-            name="angle-right"
-            color="dodgerblue"
-            size={28}
-            style={{marginLeft: '30%', marginTop: 6}}
-          />
-        </TouchableOpacity>
+        </View>
+        <View style={{paddingTop:180}}>
+          <View style={{flexDirection:'row', justifyContent:'space-around'}}>
+            <TouchableOpacity style={{backgroundColor:'#0F1D41', height:90, width:150, borderRadius:15, justifyContent:'center',
+          alignItems:'center'}}
+          onPress={() => navigation.navigate('chatscreen', user_data)}>
+              <Text style={{color:'white', fontSize:20}}>Chatroom</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        </View>
       ) : (
         <View
           style={{
