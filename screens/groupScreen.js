@@ -2,26 +2,64 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, ScrollView, FlatList} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import globalstyles from '../globalstyles';
-//import {Groupid} from './creategroup';
-//import {groupdata} from './home';
-//import {groupUserInfo} from './home';
-//import {GroupUnits} from './home';
+import { Groupid } from './home';
 
-function groupScreen({navigation}) {
+export var GroupData;
+
+function groupScreen({route, navigation}) {
+  const [groupdata,setgroupdata] = useState({});
+  const [usersInfo, setUsersInfo] = useState([]);
+  const groupid = route.params;
+
+  useEffect(() => {
+    
+    const subscriber = firestore()
+      .collection('classGroups')
+      .doc(groupid)
+      .onSnapshot(documentSnapshot => {
+        setgroupdata(documentSnapshot.data());
+      });
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+
+  
+GroupData = groupdata;
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Users')
+      .where('groupId', '==', Groupid)
+      .onSnapshot(snapshot =>
+        setUsersInfo(
+          snapshot.docs.map(doc => ({
+            UserId: doc.data().userId,
+            UserName: doc.data().name,
+            PhoneNo: doc.data().phoneNumber,
+          })),
+        ),
+      );
+      console.log(usersInfo)
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+
+  //leaving group
+
   return (
     <View style={globalstyles.container}>
       <View
         style={{
           backgroundColor: '#0F1D41',
-          borderBottomLeftRadius: 15,
-          borderBottomRightRadius: 15,
+          borderBottomLeftRadius: 25,
+          borderBottomRightRadius: 25,
           padding: 8,
         }}>
         <View
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            marginTop: 25,
+            //marginTop: 15,
           }}>
           <View
             style={{
@@ -33,7 +71,7 @@ function groupScreen({navigation}) {
               alignItems: 'center',
             }}>
             <Text style={{color: 'tomato', fontSize: 20}}>
-              {groupdata.Group_Name.charAt[0]}
+              {'CS'}
             </Text>
           </View>
           <Text style={{color: 'white', fontSize: 20, fontFamily: 'georgia'}}>
@@ -44,28 +82,52 @@ function groupScreen({navigation}) {
               Year {groupdata.StudyYear}
             </Text>
             <Text style={{color: 'tomato', fontSize: 18, paddingLeft: 8}}>
-              Sem {groupdata.StudyYear}
+              Sem {groupdata.semister}
             </Text>
           </View>
+          <TouchableOpacity
+        style={{
+          borderRadius: 35,
+          width: '75%',
+          backgroundColor: 'white',
+          alignSelf: 'center',
+          alignItems: 'center',
+          height: 50,
+          justifyContent: 'center',
+          marginBottom:10, marginTop:7
+        }}
+        onPress={() => navigation.navigate('groupinfo')}>
+        <Text
+          style={{
+            color: '#0F1D41',
+            fontFamily: 'georgia',
+            fontSize: 25,
+            fontStyle: 'italic',
+            fontWeight: 'bold',
+          }}>
+          Class resources
+        </Text>
+      </TouchableOpacity>
         </View>
-        <View>
+        
+      </View>
+      <View>
           <Text style={{color: 'dodgerblue', fontSize: 18}}>
             ClassModerator
           </Text>
-          <Text style={{color: 'white', fontSize: 18}}>
-            {groupdata.moderatorName}
+          <Text style={{color: 'dodgerblue', fontSize: 18}}>
+            {groupdata.name}
           </Text>
-          <Text style={{color: 'white', fontSize: 18}}>
+          <Text style={{color: 'dodgerblue', fontSize: 18}}>
             {groupdata.ModeratorPhoneNo}
           </Text>
         </View>
-      </View>
       <View style={{padding: 10}}>
         <Text style={{color: 'tomato', fontSize: 18, fontFamily: 'georgia'}}>
           Members
         </Text>
         <FlatList
-          data={groupUserInfo}
+          data={usersInfo}
           keyExtractor={item => item.UserId}
           renderItem={({item}) => (
             <TouchableOpacity>
@@ -105,30 +167,7 @@ function groupScreen({navigation}) {
           </TouchableOpacity>
         </ScrollView>
       </View>
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          bottom: 15,
-          borderRadius: 35,
-          width: '75%',
-          backgroundColor: '#0F1D41',
-          alignSelf: 'center',
-          alignItems: 'center',
-          height: 50,
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white',
-            fontFamily: 'georgia',
-            fontSize: 25,
-            fontStyle: 'italic',
-            fontWeight: 'bold',
-          }}
-          onPress={() => navigation.navigate('groupinfo', GroupUnits)}>
-          Class resources
-        </Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }

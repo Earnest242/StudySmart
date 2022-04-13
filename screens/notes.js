@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,41 +8,37 @@ import {
   Button,
   Image,
   ActivityIndicator,
+  Platform,Modal, ToastAndroid
 } from 'react-native';
 import storage from '@react-native-firebase/storage';
-// To pick the file from local file system
+import firestore from '@react-native-firebase/firestore';
 import DocumentPicker from 'react-native-document-picker';
 //import FileViewer from "react-native-file-viewer";
+import RNFetchBlob from 'rn-fetch-blob';
+import { GroupData } from './groupScreen';
 
 var counter = 252;
 
 const notespage = ({navigation, route}) => {
   var notes2 = route.params;
-  let [loading, setLoading] = useState(false);
-  let [filePath, setFilePath] = useState();
-  let [process, setProcess] = useState('');
-  let [filename, setFilename] = useState();
-  let [fileUri, setFileUri] = useState();
-  let [fileSize, setFileSize] = useState();
+  let [notes, setNotes]=useState([]);
+  const [delModal, setDelModal]=useState(false);
+  let [deleteID, setdeleteID] = useState('');
 
   //picking a document
-  const _chooseFile = async () => {
+  async function _chooseFile () {
     // Opening Document Picker to select one file
     try {
       let res = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
       // Setting the state for selected File
-      if (res) {
-        let res2 = res[0];
-        setFilePath(res2);
-        console.log(filePath.name);
-        console.log(filePath.uri);
-        console.log(res2);
-        //_uploadFile();
-      } else {
-        ('unable to pick file');
-      }
+      
+        let file = res[0];
+        const filePath = await normalizePath(file.uri)
+        const result = await RNFetchBlob.fs.readFile(filePath,'base64');
+        uploadingToFirebase(file, result)
+      
     } catch (error) {
       setFilePath();
       // If user canceled the document selection
@@ -53,44 +49,97 @@ const notespage = ({navigation, route}) => {
       );
     }
   };
-  //uploading a file
-  /*const _uploadFile = async () => {
-    try {
-      // Check if file selected
-      if (filename == '') return alert('Please Select any File');
-      setLoading(true);
 
-      // Create Referencesss
-      const reference = storage().ref('classDocuments/upload.img');
-
-      // Put File
-      const task = reference.putFile(`${filePath.uri}`);
-      // You can do different operation with task
-      // task.pause();
-      // task.resume();
-      // task.cancel();
-
-      /*task.on('state_changed', taskSnapshot => {
-        setProcess(
-          `${taskSnapshot.bytesTransferred} transferred 
-           out of ${taskSnapshot.totalBytes}`,
-        );
-        console.log(
-          `${taskSnapshot.bytesTransferred} transferred 
-           out of ${taskSnapshot.totalBytes}`,
-        );
-      });
-      task.then(() => {
-        alert('Image uploaded to the bucket!');
-        setProcess('');
-      });
-      setFilePath(null);
-    } catch (error) {
-      console.log('Error->', error);
-      alert(`Error-> ${error}`);
+  async function normalizePath (filePath){
+    if(Platform.OS === 'ios' || Platform.OS === 'android'){
+      const filePrefix = 'file://';
+      if(filePath.startsWith(filePrefix)){
+        filePath = filePath.substring(filePrefix.length);
+        try{
+          filePath = decodeURI(filePath);
+        }catch(e){}
+      }
     }
-    setLoading(false);
-  };*/
+    return filePath;
+  }
+  //uploading a file
+  async function uploadingToFirebase (file, result){
+    let d = new Date().getTime();
+      let Doc_Id = `${d}`; 
+      let fileName = `${file.name}` + `${d}`;
+    const uploadTask = storage().ref(`classDocuments/${fileName}`).putString(result,'base64',{contentType:file.type});
+    uploadTask.on('state_changed', 
+  (snapshot) => {
+    // Observe state change events such as progress, pause, and resume
+    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    console.log('Upload is ' + progress + '% done');
+    switch (snapshot.state) {
+      case 'paused':
+        console.log('Upload is paused');
+        break;
+      case 'running':
+        console.log('Upload is running');
+        break;
+    }
+  }, 
+  (error) => {
+    console.log(error)
+    // Handle unsuccessful uploads
+  }, 
+  () => {
+    // Handle successful uploads on complete
+    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+      console.log('File available at', downloadURL);
+      firestore().collection('classGroups').doc(`${GroupData.groupId}`).collection('units').doc(`${notes2.UnitId}`)
+      .collection('notes').doc(`${Doc_Id}`).set({DocId:Doc_Id, DocName:file.name, DocType:file.type, DocPath:downloadURL, DocSize:file.size})
+    });
+  }
+);
+}
+
+//getting the documents
+useEffect(() => {
+  const subscriber = firestore()
+    .collection('classGroups')
+    .doc(GroupData.groupId)
+    .collection('units')
+    .doc(notes2.UnitId)
+    .collection('notes')
+    .onSnapshot(snapshot =>
+      setNotes(
+        snapshot.docs.map(doc => ({
+          DocId:doc.data().DocId,
+          DocName: doc.data().DocName,
+          DocType: doc.data().DocType,
+          DocPath: doc.data().DocPath,
+          DocSize: doc.data().DocSize,
+        })),
+      ),
+    );
+  // Stop listening for updates when no longer required
+  return () => subscriber();
+}, []);
+//deleting a doc
+const delMOdal2 =(DocId)=>{
+  setDelModal(true);
+  setdeleteID(DocId)
+}
+  //deleting a unit
+  function deleteUnit (){
+    try{
+    const delete45 = firestore().
+    collection('classGroups').doc(`${GroupData.groupId}`).collection('units').doc(`${notes2.UnitId}`).collection('notes').
+    doc(`${deleteID}`).delete();
+    if (delete45){
+      ToastAndroid.show('Deleted', ToastAndroid.SHORT);
+      setDelModal(null);
+    }
+    }catch (error){
+      alert(error);
+    }
+  }
 
   return (
     <View style={styles.container56}>
@@ -104,19 +153,11 @@ const notespage = ({navigation, route}) => {
           }}>
           {notes2.UnitName}
         </Text>
-        <Text
-          style={{
-            fontSize: 22,
-            marginLeft: 15,
-            color: 'white',
-            fontWeight: 'bold',
-          }}>
-          {process}
-        </Text>
+        
       </View>
       <FlatList
-        data={notes2.notes}
-        keyExtractor={item => item.notesId}
+        data={notes}
+        keyExtractor={item => item.DocId}
         renderItem={({item}) => (
           <TouchableOpacity
             style={{
@@ -124,9 +165,10 @@ const notespage = ({navigation, route}) => {
               paddingLeft: 10,
               paddingTop: 8,
               flexDirection: 'row',
-            }}>
+            }}
+            onLongPress={()=>delMOdal2(item.DocId)}>
             <Text style={{color: 'black', fontSize: 15, paddingLeft: 10}}>
-              {item.name}
+              {item.DocName}
             </Text>
           </TouchableOpacity>
         )}
@@ -134,6 +176,21 @@ const notespage = ({navigation, route}) => {
       <TouchableOpacity style={styles.Flot} onPress={_chooseFile}>
         <Text style={{fontSize: 42, color: 'white'}}>+</Text>
       </TouchableOpacity>
+      <Modal visible={delModal} transparent={true}>
+        <View style={{flex:1, justifyContent:'center', alignContent:'center', alignItems:'center'}}>
+        <View style={{backgroundColor:'white', height:90, width:'80%', borderRadius:20, padding:10}}>
+          <Text style={{color:'dodgerblue', fontSize:18}}>Do you want to delete the unit?</Text>
+          <View style={{flexDirection:'row', justifyContent:'space-between', padding:17}}>
+            <TouchableOpacity onPress={()=>setDelModal(false)} >
+              <Text style={{color:'dodgerblue', fontSize:18}}>No</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>deleteUnit(deleteID)}>
+              <Text style={{color:'red', fontSize:18}}>Yes</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -149,7 +206,7 @@ const styles = StyleSheet.create({
   title: {
     height: 60,
     width: '100%',
-    backgroundColor: 'grey',
+    backgroundColor: '#0F172A',
     justifyContent: 'center',
     borderRadius: 1,
   },

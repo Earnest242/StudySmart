@@ -59,45 +59,27 @@ function chatScreen({route,navigation, props}) {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      <View
-        style={{
-          backgroundColor: '#0F1D41',
-          height: 45,
-          //borderBottomLeftRadius: 8,
-          //borderBottomRightRadius: 8,
-        }}>
         <TouchableOpacity
-          style={{flexDirection: 'row', width: '100%'}}
-          onPress={() => navigation.navigate('groupscreen')}>
-          <View
-            style={{
-              backgroundColor: '#D3DAEE',
-              height: 30,
-              width: 30,
-              borderRadius: 15,
-              marginLeft: 15,
-            }}></View>
+          style={{backgroundColor: '#0F1D41',height: 45,width: '100%', justifyContent:'center', alignItems:'center'}}
+          onPress={() => navigation.navigate('groupscreen', Groupid)}>
           <Text
             style={{
               color: 'white',
               fontSize: 21,
               //fontFamily: 'georgia',
               //fontStyle: 'italic',
-              paddingLeft: '17%',
             }}>
             {route.params.groupName}
           </Text>
-        </TouchableOpacity>
-        <Text
+          <Text
           style={{
             color: 'white',
             fontSize: 10,
-            paddingLeft: '39%',
             paddingBottom: 4,
           }}>
           Tap for group info...
         </Text>
-      </View>
+        </TouchableOpacity>
       <GiftedChat
         isTyping={true}
         textInputStyle={{borderRadius: 20, backgroundColor: 'grey'}}

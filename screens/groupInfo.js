@@ -3,7 +3,7 @@ import {View, TouchableOpacity, Text, StyleSheet, Button} from 'react-native';
 import globalstyles from '../globalstyles';
 
 function groupInfo({route, navigation}) {
-  var units4 = route.params;
+  
   return (
     <View
       style={{
@@ -14,7 +14,7 @@ function groupInfo({route, navigation}) {
       }}>
       <TouchableOpacity
         style={styles.floatss}
-        onPress={() => navigation.navigate('units', units4)}>
+        onPress={() => navigation.navigate('units')}>
         <Text
           style={{
             color: 'white',

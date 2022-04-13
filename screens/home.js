@@ -107,7 +107,7 @@ const homeScreen = ({navigation}) => {
             <TouchableOpacity style={{backgroundColor:'#0F1D41', height:90, width:150, borderRadius:15, justifyContent:'center',
           alignItems:'center'}}
           onPress={() => navigation.navigate('chatscreen', user_data)}>
-              <Text style={{color:'white', fontSize:20}}>Chatroom</Text>
+              <Text style={{color:'white', fontSize:20}}>chatroom</Text>
             </TouchableOpacity>
           </View>
         </View>

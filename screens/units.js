@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,24 @@ import {
 } from 'react-native';
 import globalstyles from '../globalstyles';
 import firestore from '@react-native-firebase/firestore';
-//import {Groupid} from './home';
+import { GroupData } from './groupScreen';
+import { user1 } from '../database/data';
 
 var test = true;
 
 const units = ({route, navigation}) => {
   var units5 = route.params;
+  
   const [modalOp, setModalOp] = useState(false);
   const [sunits, setSunits] = useState('');
   const [inCode, setIncode] = useState('');
-
-  var unit_Id = 4387254;
+  const [delModal, setDelModal]=useState(false)
+  let [units, setunits]=useState([]);
+  let [deleteID, setdeleteID] = useState('');
 
   //checking for moderator id
   const checkid = () => {
-    if (test == 'true') {
+    if ( GroupData.moderatorId == user1.uid ) {
       setModalOp(true);
     } else {
       ToastAndroid.show(
@@ -36,16 +39,25 @@ const units = ({route, navigation}) => {
     }
   };
 
-  const addUnits2 = async () => {
+   function addUnits2 (sunits, inCode) {
     if (sunits && inCode !== '') {
-      unit_Id = unit_Id + new Date().toString();
+      let d = new Date().getTime();
+      let unit_Id = `${d}`; 
       try {
-        let addunit = await firestore()
+        let addunit = firestore()
           .collection('classGroups')
-          .doc(Groupid)
+          .doc(GroupData.groupId)
           .collection('units')
-          .add({UnitId: unit_Id, UnitCode: inCode, UnitName: sunits});
+          .doc(unit_Id)
+          .set({UnitId: unit_Id, UnitCode: inCode.toUpperCase(), UnitName: sunits});
         if (addunit) {
+          firestore()
+            .collection('classGroups')
+            .doc(GroupData.groupId)
+            .collection('units')
+            .doc(unit_Id)
+            .collection('notes')
+            .add({});
           ToastAndroid.show('Unit added', ToastAndroid.SHORT);
           setModalOp(false);
         }
@@ -57,6 +69,45 @@ const units = ({route, navigation}) => {
       alert('All fields must be filled');
     }
   };
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('classGroups')
+      .doc(GroupData.groupId)
+      .collection('units')
+      .onSnapshot(snapshot =>
+        setunits(
+          snapshot.docs.map(doc => ({
+            UnitId: doc.data().UnitId,
+            UnitCode: doc.data().UnitCode,
+            UnitName: doc.data().UnitName,
+            notes: doc.data().notes,
+          })),
+        ),
+      );
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+//del modal
+const delMOdal2 =(unitID)=>{
+  setDelModal(true);
+  setdeleteID(unitID)
+}
+  //deleting a unit
+  function deleteUnit (){
+    try{
+    const delete45 = firestore().
+    collection('classGroups').doc(GroupData.groupId).collection('units').
+    doc(deleteID).delete();
+    if (delete45){
+      ToastAndroid.show('Deleted', ToastAndroid.SHORT);
+      setDelModal(null);
+    }
+    }catch (error){
+      alert(error);
+    }
+  }
+  
 
   return (
     <View style={{flex: 1, backgroundColor: '#0F172A'}}>
@@ -103,12 +154,13 @@ const units = ({route, navigation}) => {
         </View>
       </Modal>
       <FlatList
-        data={units5}
+        data={units}
         keyExtractor={item => item.UnitId}
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.toucho}
-            onPress={() => navigation.navigate('notespage', item)}>
+            onPress={() => navigation.navigate('notespage', item)}
+            onLongPress={()=>delMOdal2(item.UnitId)}>
             <Text style={styles.Fview1}>
               {item.UnitCode}:{item.UnitName}
             </Text>
@@ -118,6 +170,21 @@ const units = ({route, navigation}) => {
       <TouchableOpacity style={styles.Flot} onPress={() => checkid()}>
         <Text style={{fontSize: 42, color: 'white'}}>+</Text>
       </TouchableOpacity>
+      <Modal visible={delModal} transparent={true}>
+        <View style={{flex:1, justifyContent:'center', alignContent:'center', alignItems:'center'}}>
+        <View style={{backgroundColor:'white', height:90, width:'80%', borderRadius:20, padding:10}}>
+          <Text style={{color:'dodgerblue', fontSize:18}}>Do you want to delete the unit?</Text>
+          <View style={{flexDirection:'row', justifyContent:'space-between', padding:17}}>
+            <TouchableOpacity onPress={()=>setDelModal(false)} >
+              <Text style={{color:'dodgerblue', fontSize:18}}>No</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>deleteUnit(deleteID)}>
+              <Text style={{color:'red', fontSize:18}}>Yes</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        </View>
+      </Modal>
     </View>
   );
 };

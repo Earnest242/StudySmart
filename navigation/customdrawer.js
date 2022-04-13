@@ -6,7 +6,7 @@ import {
   DrawerContent,
 } from '@react-navigation/drawer';
 import globalstyles from '../globalstyles';
-//import {userdata} from '../screens/home';
+import { userdata } from '../screens/home';
 
 const Customdrawer = props => {
   return (
@@ -39,10 +39,10 @@ const Customdrawer = props => {
           </Text>
         </View>
         <Text style={{color: 'white', fontSize: 18, fontFamily: 'georgia'}}>
-          {'userdata.name'}
+          {userdata.name}
         </Text>
         <Text style={{color: 'white', fontSize: 18, fontFamily: 'georgia'}}>
-          {'userdata.phoneNumber'}
+          {userdata.phoneNumber}
         </Text>
       </View>
       <ScrollView>

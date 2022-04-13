@@ -40,6 +40,7 @@ export const creategroup = ({navigation}) => {
             groupId: group_Id,
             Group_Name: GroupName,
             moderatorId: user2.uid,
+            ModeratorPhoneNo:user2.phoneNumber,
             name: userdata.name,
             StudyYear: yearOfStudy,
             semister: sem,
