@@ -13,17 +13,39 @@ import {
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import DocumentPicker from 'react-native-document-picker';
-//import FileViewer from "react-native-file-viewer";
+import OpenFile from 'react-native-files-viewer';
 import RNFetchBlob from 'rn-fetch-blob';
 import { GroupData } from './groupScreen';
 
 var counter = 252;
+
+
 
 const notespage = ({navigation, route}) => {
   var notes2 = route.params;
   let [notes, setNotes]=useState([]);
   const [delModal, setDelModal]=useState(false);
   let [deleteID, setdeleteID] = useState('');
+  //
+  //const [animating, setAnimating] = useState<boolean>(false);
+
+  useEffect(() => {}, []);
+
+  
+  function handlePress() {
+    if (Platform.OS === 'android') {
+      //setAnimating(true);
+      OpenFile.openDoc(
+          {
+            url: 'http://www.africau.edu/images/default/sample.pdf',
+            fileName: 'demo1',
+            cache: true,
+            fileType: 'application/pdf',
+          },
+        cb,
+      );
+    }
+  }
 
   //picking a document
   async function _chooseFile () {
@@ -166,6 +188,7 @@ const delMOdal2 =(DocId)=>{
               paddingTop: 8,
               flexDirection: 'row',
             }}
+            onPress={()=>handlePress()}
             onLongPress={()=>delMOdal2(item.DocId)}>
             <Text style={{color: 'black', fontSize: 15, paddingLeft: 10}}>
               {item.DocName}

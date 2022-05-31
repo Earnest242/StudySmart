@@ -3,11 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, ToastAndroid } from "react-nat
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
+export var user2 ;
 function otpVerification ({route, navigation}){
 
     let [confirm, setConfirm] = useState(route.params);
     let [code, setCode] = useState();
-    var user2 = firebase.auth().currentUser;
+    user2 = firebase.auth().currentUser;
     //console.log(confirm);
 
     useEffect(() => {
@@ -17,7 +18,6 @@ function otpVerification ({route, navigation}){
               .collection('Users')
               .doc(user2.uid)
               .set({userId: user2.uid, phoneNumber: user2.phoneNumber});
-            
             setTimeout(function(){
               ToastAndroid.show(
                 'Code detected, Registration successful',

@@ -10,7 +10,7 @@ import React, {useState, useEffect} from 'react';
 import {Text, View, TouchableOpacity, StatusBar, Modal, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { user1 } from '../database/data';
+//import { user2 } from './otp';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
@@ -23,21 +23,25 @@ export var Groupid;
 const homeScreen = ({navigation}) => {
   var user2 = firebase.auth().currentUser;
   //getuserdata();
+  
 
   let [user_data, setUser_data] = useState({});
   let [floatmodal, setfloatmodal] = useState(false);
-
+  
   useEffect(() => {
+    
     const subscriber = firestore()
       .collection('Users')
-      .doc(user1.uid)
+      .doc(user2.uid)
       .onSnapshot(documentSnapshot => {
         console.log('User data55: ', documentSnapshot.data());
         setUser_data(documentSnapshot.data());
       });
+    
     // Stop listening for updates when no longer required
     return () => subscriber();
-  }, []);
+  }, []); 
+  
   userdata = user_data;
   console.log(userdata);
   Groupid = userdata.groupId;
@@ -126,6 +130,7 @@ const homeScreen = ({navigation}) => {
             You don't belong to a group. Tap on the icon below to create or join
             a group
           </Text>
+          
         </View>
       )}
       <TouchableOpacity

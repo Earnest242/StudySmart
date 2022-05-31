@@ -7,7 +7,7 @@ import {user2} from '../screens/signUp';
 //var user1 = [{id: null, name1: null, course1: null, year1: null, sem1: null}];
 
 //export var groupdata = {};
-export const user1 = firebase.auth().currentUser;
+/*export const user1 = firebase.auth().currentUser;
 export var groupUserInfo;
 export var GroupUnits;
 //export var userdata = {};

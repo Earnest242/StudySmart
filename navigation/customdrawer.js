@@ -35,13 +35,13 @@ const Customdrawer = props => {
               fontFamily: 'georgia',
               fontStyle: 'italic',
             }}>
-            e
+            m
           </Text>
         </View>
         <Text style={{color: 'white', fontSize: 18, fontFamily: 'georgia'}}>
           {userdata.name}
         </Text>
-        <Text style={{color: 'white', fontSize: 18, fontFamily: 'georgia'}}>
+        <Text style={{color: 'white', fontSize: 18, fontFamily: 'georgia', paddingBottom:10}}>
           {userdata.phoneNumber}
         </Text>
       </View>

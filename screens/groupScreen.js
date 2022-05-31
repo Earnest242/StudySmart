@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, ScrollView, FlatList} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, FlatList, Modal, ToastAndroid} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import globalstyles from '../globalstyles';
 import { Groupid } from './home';
+import {firebase} from '@react-native-firebase/auth';
 
 export var GroupData;
 
 function groupScreen({route, navigation}) {
   const [groupdata,setgroupdata] = useState({});
   const [usersInfo, setUsersInfo] = useState([]);
+  let [delModal, setDelmodal] = useState(false);
+  let [inviteMemModal, setInviteMemModal] = useState(false);
   const groupid = route.params;
+  let user2 = firebase.auth().currentUser;
 
   useEffect(() => {
     
@@ -22,7 +26,19 @@ function groupScreen({route, navigation}) {
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
-
+//function to leave the group
+  function LeaveGroup (){
+    console.log('deleting')
+    firestore()
+        .collection('Users')
+        .doc(`${user2.uid}`)
+        .update({groupId:null, groupName:null});
+      
+        ToastAndroid.show('left the group', ToastAndroid.SHORT);
+        navigation.navigate('StudySmart');
+     
+  }
+  //function to invite member
   
 GroupData = groupdata;
 
@@ -111,14 +127,14 @@ GroupData = groupdata;
         </View>
         
       </View>
-      <View>
-          <Text style={{color: 'dodgerblue', fontSize: 18}}>
+      <View style={{paddingLeft:10}}>
+          <Text style={{color: 'tomato', fontSize: 18}}>
             ClassModerator
           </Text>
-          <Text style={{color: 'dodgerblue', fontSize: 18}}>
+          <Text style={{color: 'dodgerblue', fontSize: 16, paddingLeft:15}}>
             {groupdata.name}
           </Text>
-          <Text style={{color: 'dodgerblue', fontSize: 18}}>
+          <Text style={{color: 'dodgerblue', fontSize: 16, paddingLeft:15}}>
             {groupdata.ModeratorPhoneNo}
           </Text>
         </View>
@@ -132,13 +148,7 @@ GroupData = groupdata;
           renderItem={({item}) => (
             <TouchableOpacity>
               <View style={{flexDirection: 'row'}}>
-                <View
-                  style={{
-                    backgroundColor: '#D3DAEE',
-                    height: 30,
-                    width: 30,
-                    borderRadius: 15,
-                  }}></View>
+                
                 <Text
                   style={{
                     color: 'dodgerblue',
@@ -156,18 +166,46 @@ GroupData = groupdata;
             </TouchableOpacity>
           )}
         />
-        <ScrollView>
-          <TouchableOpacity>
-            <Text style={{color: 'dodgerblue', fontSize: 15}}>Leave Group</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={{color: 'dodgerblue', fontSize: 15}}>
+        
+      </View>
+      <Modal visible={delModal} transparent={true}>
+        <View style={{flex:1, justifyContent:'center', alignContent:'center', alignItems:'center'}}>
+        <View style={{backgroundColor:'#0F1D41', width:'80%', borderRadius:20, padding:10}}>
+          <Text style={{color:'white', fontSize:18}}>Are you sure you want to leave the group?</Text>
+          <View style={{flexDirection:'row', justifyContent:'space-between', padding:17}}>
+            <TouchableOpacity onPress={()=>setDelmodal(false)} >
+              <Text style={{color:'white', fontSize:18}}>No</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>LeaveGroup()}>
+              <Text style={{color:'red', fontSize:18}}>Yes</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        </View>
+      </Modal>
+      <Modal visible={inviteMemModal} transparent={true}>
+        <View style={{flex:1, justifyContent:'center', alignContent:'center', alignItems:'center'}}>
+        <View style={{backgroundColor:'#0F1D41', width:'80%', borderRadius:20, padding:10}}>
+          <Text style={{color:'white', fontSize:15}}>Copy and send this code to your friend</Text>
+          <Text style={{color:'white', fontSize:15, padding:15}} selectable>{groupid}</Text>
+            <TouchableOpacity onPress={()=>setInviteMemModal(false)} >
+              <Text style={{color:'white', fontSize:15}}>close</Text>
+            </TouchableOpacity>
+        </View>
+        </View>
+      </Modal>
+      <View style={{position:'absolute', bottom:10, paddingLeft:10}}>
+      <TouchableOpacity onPress={()=>setInviteMemModal(true)}>
+            <Text style={{color: 'dodgerblue', fontSize: 18}}>
               Invite member
             </Text>
+            </TouchableOpacity>
+          <TouchableOpacity onPress={()=>setDelmodal(true)}>
+            <Text style={{color: 'dodgerblue', fontSize: 18}}>Leave Group</Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
-      
+          
+          
+        </View>
     </View>
   );
 }

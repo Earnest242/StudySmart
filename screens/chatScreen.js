@@ -4,10 +4,12 @@ import globalstyles from '../globalstyles';
 import {GiftedChat} from 'react-native-gifted-chat';
 import { user1 } from '../database/data';
 import firestore from '@react-native-firebase/firestore';
+import {firebase} from '@react-native-firebase/auth';
 import { Groupid } from './home';
 import {groupdata} from './home';
 
 function chatScreen({route,navigation, props}) {
+  var user2 = firebase.auth().currentUser;
   let [messages, setMessages] = useState([]);
   useEffect(() => {
     setMessages([
@@ -87,7 +89,7 @@ function chatScreen({route,navigation, props}) {
         renderUsernameOnMessage={true}
         onSend={messages => onSend(messages)}
         user={{
-          _id: user1.uid,
+          _id: user2.uid,
           name: 'earnest',
           //avatar: auth?.currentUser?.photoURL,
         }}

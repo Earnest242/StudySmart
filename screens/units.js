@@ -14,11 +14,13 @@ import globalstyles from '../globalstyles';
 import firestore from '@react-native-firebase/firestore';
 import { GroupData } from './groupScreen';
 import { user1 } from '../database/data';
+import {firebase} from '@react-native-firebase/auth';
 
 var test = true;
 
 const units = ({route, navigation}) => {
   var units5 = route.params;
+  var user2 = firebase.auth().currentUser;
   
   const [modalOp, setModalOp] = useState(false);
   const [sunits, setSunits] = useState('');
@@ -26,10 +28,11 @@ const units = ({route, navigation}) => {
   const [delModal, setDelModal]=useState(false)
   let [units, setunits]=useState([]);
   let [deleteID, setdeleteID] = useState('');
+  
 
   //checking for moderator id
   const checkid = () => {
-    if ( GroupData.moderatorId == user1.uid ) {
+    if ( GroupData.moderatorId == user2.uid ) {
       setModalOp(true);
     } else {
       ToastAndroid.show(
