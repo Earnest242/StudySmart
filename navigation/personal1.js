@@ -12,6 +12,8 @@ import notespage from '../screens/notes';
 import {joinGroup} from '../screens/creategroup';
 import phoneAuth from '../screens/phoneAuth';
 import otpVerification from '../screens/otp';
+import timetables from '../screens/timetables';
+import Assignments from '../screens/assignemets';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,7 +84,22 @@ const AppScreen = () => {
         component={otpVerification}
         options={{headerShown: false}}
       />
-      
+      <Stack.Screen
+        name="timetables"
+        component={timetables}
+        options={{
+          title: 'Timetables',
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: '#0F1D41'},}}
+      />
+      <Stack.Screen
+        name="assignments"
+        component={Assignments}
+        options={{
+          title: 'Asssignmets',
+          headerTintColor: 'white',
+          headerStyle: {backgroundColor: '#0F1D41'},}}
+      />
     </Stack.Navigator>
   );
 };

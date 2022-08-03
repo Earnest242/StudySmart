@@ -56,6 +56,16 @@ export const creategroup = ({navigation}) => {
             .doc(group_Id)
             .collection('units')
             .add({});
+            firestore()
+            .collection('classGroups')
+            .doc(group_Id)
+            .collection('timetables')
+            .add({});
+            firestore()
+            .collection('classGroups')
+            .doc(group_Id)
+            .collection('assignments')
+            .add({});
           firestore()
             .collection('Users')
             .doc(user2.uid)
@@ -170,6 +180,8 @@ export const creategroup = ({navigation}) => {
 export const joinGroup = ({navigation}) => {
   let [JoinGropiId, setJoinGroupId] = useState('');
 
+  var user2 = firebase.auth().currentUser;
+
   //JOIN GROUP
   const JoinGroup = async () => {
     if (JoinGropiId !== '') {
@@ -178,7 +190,7 @@ export const joinGroup = ({navigation}) => {
         let joing = await firestore()
           .collection('Users')
           .doc(user2.uid)
-          .set({groupId: Groupid}, {merge: true});
+          .set({groupId: JoinGropiId}, {merge: true});
         if (joing) {
           ToastAndroid.show('Joined group', ToastAndroid.SHORT);
           navigation.navigate('StudySmart');

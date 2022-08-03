@@ -25,7 +25,7 @@ function groupInfo({route, navigation}) {
           Notes
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.floatss}>
+      <TouchableOpacity style={styles.floatss} onPress={()=>navigation.navigate('timetables')}>
         <Text
           style={{
             color: 'white',
@@ -36,7 +36,7 @@ function groupInfo({route, navigation}) {
           Timetables
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.floatss}>
+      <TouchableOpacity style={styles.floatss} onPress={()=>navigation.navigate('assignments')}>
         <Text
           style={{
             color: 'white',

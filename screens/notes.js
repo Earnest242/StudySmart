@@ -96,6 +96,7 @@ const notespage = ({navigation, route}) => {
     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     console.log('Upload is ' + progress + '% done');
+    ToastAndroid.show('Upload in progress ' + progress + '%done', ToastAndroid.LONG);
     switch (snapshot.state) {
       case 'paused':
         console.log('Upload is paused');
@@ -175,7 +176,6 @@ const delMOdal2 =(DocId)=>{
           }}>
           {notes2.UnitName}
         </Text>
-        
       </View>
       <FlatList
         data={notes}
@@ -196,6 +196,7 @@ const delMOdal2 =(DocId)=>{
           </TouchableOpacity>
         )}
       />
+      
       <TouchableOpacity style={styles.Flot} onPress={_chooseFile}>
         <Text style={{fontSize: 42, color: 'white'}}>+</Text>
       </TouchableOpacity>

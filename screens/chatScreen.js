@@ -12,19 +12,8 @@ function chatScreen({route,navigation, props}) {
   var user2 = firebase.auth().currentUser;
   let [messages, setMessages] = useState([]);
   useEffect(() => {
+    
     setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        sent: true,
-        received: true,
-        renderTicks: true,
-        user: {
-          _id: 2,
-          name: 'React Native',
-        },
-      },
     ]);
   }, []);
 
@@ -58,7 +47,7 @@ function chatScreen({route,navigation, props}) {
       );
     return unsubscribe;
   }, []);
-
+console.log(messages)
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
         <TouchableOpacity

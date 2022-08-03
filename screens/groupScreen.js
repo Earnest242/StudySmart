@@ -33,7 +33,7 @@ function groupScreen({route, navigation}) {
         .collection('Users')
         .doc(`${user2.uid}`)
         .update({groupId:null, groupName:null});
-      
+        setDelmodal(false)
         ToastAndroid.show('left the group', ToastAndroid.SHORT);
         navigation.navigate('StudySmart');
      
@@ -55,7 +55,6 @@ GroupData = groupdata;
           })),
         ),
       );
-      console.log(usersInfo)
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);

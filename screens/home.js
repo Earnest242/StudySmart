@@ -34,7 +34,6 @@ const homeScreen = ({navigation}) => {
       .collection('Users')
       .doc(user2.uid)
       .onSnapshot(documentSnapshot => {
-        console.log('User data55: ', documentSnapshot.data());
         setUser_data(documentSnapshot.data());
       });
     
@@ -43,9 +42,8 @@ const homeScreen = ({navigation}) => {
   }, []); 
   
   userdata = user_data;
-  console.log(userdata);
   Groupid = userdata.groupId;
-  console.log(Groupid);
+  
 
   const joingroupnav = props => {
     navigation.navigate(props);
@@ -85,12 +83,10 @@ const homeScreen = ({navigation}) => {
         <View>
         <View
           style={{
-            marginTop: 10,
             height: 100,
             width: '100%',
-            marginLeft: 15,
-            //paddingRight: 15,
-            //borderRadius: 5,
+            justifyContent:'center',
+            alignItems:'center',
             flexDirection: 'row',
           }}
           >
@@ -100,7 +96,6 @@ const homeScreen = ({navigation}) => {
               fontSize: 20,
               fontWeight:'bold',
               fontFamily: 'georgia',
-              marginLeft: 75,
               marginTop: 15,
             }}>
             {user_data.groupName}
